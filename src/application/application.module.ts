@@ -6,6 +6,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -22,7 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           isTest ? 'POSTGRES_TEST_DATABASE' : 'POSTGRES_DATABASE',
         );
         const logging = !isTest;
-
         return {
           dialect: 'postgres',
           host: configService.get<string>('POSTGRES_HOST'),
@@ -33,13 +34,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           autoLoadModels: true,
           synchronize: true,
           logging,
-          force: true,
+          // force: true,
         };
       },
       inject: [ConfigService],
     }),
     UserModule,
     AuthModule,
+    EmailModule,
   ],
+  providers: [EmailService],
 })
 export class ApplicationModule {}

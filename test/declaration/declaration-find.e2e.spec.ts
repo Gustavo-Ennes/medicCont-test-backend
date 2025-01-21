@@ -36,12 +36,13 @@ describe('Declaration module - Find (e2e)', () => {
     await app.close();
   });
 
-  it('should find all declarations by user', async () => {
+  it('should find all declarations by user(token) and year(query param)', async () => {
     const res = await request(app.getHttpServer())
       .post('/graphql')
       .set('Authorization', `Bearer ${token}`)
       .send({
         query: findAllQuery,
+        variables: { year: declarationInput.year },
       })
       .expect(200);
 

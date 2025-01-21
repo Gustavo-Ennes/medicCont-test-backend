@@ -8,6 +8,8 @@ import { useContainer } from 'class-validator';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   app.use(
     helmet({
       crossOriginEmbedderPolicy: false,
@@ -33,7 +35,7 @@ async function bootstrap() {
 
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 1 }));
 
-  await app.listen(3000);
+  await app.listen(8080);
 
   new Logger().verbose('Keep coding!');
 }

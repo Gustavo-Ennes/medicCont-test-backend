@@ -53,8 +53,8 @@ export const findOneQuery = `
 `;
 
 export const findAllQuery = `
-  query Declarations {
-    declarations {
+  query Declarations($year: Int!) {
+    declarations(year: $year) {
       id
       name
       birthday

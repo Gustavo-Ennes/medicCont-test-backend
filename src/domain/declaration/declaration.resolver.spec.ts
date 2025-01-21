@@ -41,12 +41,12 @@ describe('DeclarationResolver', () => {
 
   it('should return an array of declarations', async () => {
     const declarations = [
-      { name: 'declaration1', userId: 1 },
-      { name: 'declaration2', userId: 1 },
+      { name: 'declaration1', userId: 1, year: 2024 },
+      { name: 'declaration2', userId: 1, year: 2024 },
     ] as Declaration[];
     (declarationModel.findAll as jest.Mock).mockResolvedValue(declarations);
 
-    expect(await resolver.findAll({ sub: 1 })).toEqual(declarations);
+    expect(await resolver.findAll(2024, { sub: 1 })).toEqual(declarations);
   });
 
   it('should return a declaration if found', async () => {

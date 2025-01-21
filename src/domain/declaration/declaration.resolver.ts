@@ -21,8 +21,11 @@ export class DeclarationResolver {
   }
 
   @Query(() => [Declaration], { name: 'declarations' })
-  findAll(@getUser() user?: { sub: number }) {
-    return this.declarationService.findAll(user);
+  findAll(
+    @Args('year', { type: () => Int }) year: number,
+    @getUser() user?: { sub: number },
+  ) {
+    return this.declarationService.findAll(user, year);
   }
 
   @Query(() => Declaration, { name: 'declaration', nullable: true })

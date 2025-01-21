@@ -33,7 +33,7 @@ type AuthReturn {
 }
 
 type Query {
-  declarations: [Declaration!]!
+  declarations(year: Int!): [Declaration!]!
   declaration(id: Int!): Declaration
 }
 

@@ -5,10 +5,12 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard } from './auth.guard';
+import { EmailModule } from '../email/email.module';
 
 export const authModuleObject = {
   imports: [
     UserModule,
+    EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

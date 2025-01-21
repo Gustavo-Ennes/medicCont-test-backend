@@ -5,6 +5,8 @@ import { AuthResolver } from '../auth.resolver';
 import { AuthService } from '../auth.service';
 import { getMockedEntityProvider } from '../../../utils/unitTests/defaultEntityMock';
 import { userModuleObject } from '../../../application/user/user.module';
+import { emailModuleObject } from '../../../application/email/email.module';
+import { ConfigService } from '@nestjs/config';
 
 const authTestModuleConfig = {
   imports: [
@@ -16,6 +18,8 @@ const authTestModuleConfig = {
     AuthResolver,
     AuthService,
     ...userModuleObject.providers,
+    ...emailModuleObject.providers,
+    ConfigService,
     getMockedEntityProvider(User),
   ],
 };

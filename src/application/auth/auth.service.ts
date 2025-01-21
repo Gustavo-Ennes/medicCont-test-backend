@@ -12,15 +12,21 @@ import { hashPassword, verifyPassword } from './auth.utils';
 import { User } from '../user/entities/user.entity';
 import { LoginInput } from './dto/login.input';
 import { AuthReturn } from './auth.utils';
+import { getRegistrationEmailTemplate } from '../email/template/email.registration.template';
+import { EmailService } from '../email/email.service';
+import { MailOptions } from 'nodemailer/lib/json-transport';
+import { reject } from 'ramda';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    private emailService: EmailService,
   ) {}
 
   private readonly logger = new Logger(AuthService.name);
+  private verificationCodes: { code: string; email: string }[] = [];
 
   async signUp(createUserInput: CreateUserInput): Promise<AuthReturn> {
     try {
@@ -38,7 +44,13 @@ export class AuthService {
         password: hashedPassword,
       });
 
-      const payload = { sub: user.id, username, email };
+      const verificationCode = String(
+        Math.round(500000 + Math.random() * 500000),
+      );
+      await this.sendConfirmationEmail(email, username, verificationCode);
+
+      const payload = { sub: user.id, username, email, verificationCode };
+
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -70,6 +82,13 @@ export class AuthService {
         username,
         email,
       };
+
+      const findFn = ({ email: verificationEmail }) =>
+        email === verificationEmail;
+      const firstLogin = this.verificationCodes.find(findFn);
+      if (firstLogin)
+        this.verificationCodes = reject(findFn, this.verificationCodes);
+
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -83,5 +102,22 @@ export class AuthService {
 
   async hashPassword(str: string): Promise<string> {
     return await hashPassword(str);
+  }
+
+  async sendConfirmationEmail(
+    address: string,
+    username: string,
+    verificationCode: string,
+  ) {
+    const params: MailOptions = this.emailService.buildEmailOptions({
+      to: { name: username, address },
+      category: 'confirmation',
+      subject: 'Confirme seu cadastro',
+      html: getRegistrationEmailTemplate({ username, verificationCode }),
+    });
+
+    this.verificationCodes.push({ code: verificationCode, email: address });
+
+    return this.emailService.sendEmail(params);
   }
 }

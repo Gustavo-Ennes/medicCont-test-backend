@@ -41,10 +41,10 @@ export class DeclarationService {
     }
   }
 
-  async findAll({ sub: userId }): Promise<Declaration[]> {
+  async findAll({ sub: userId }, year: number): Promise<Declaration[]> {
     try {
       const declarations: Declaration[] = await this.declarationModel.findAll({
-        where: { userId },
+        where: { userId, year },
         include: [{ model: User }],
       });
 
