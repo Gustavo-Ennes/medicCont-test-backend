@@ -1,0 +1,3 @@
+CREATE DATABASE medicCont;
+
+CREATE DATABASE medicContTest;
